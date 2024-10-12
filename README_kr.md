@@ -36,29 +36,32 @@ cd  ppm
 ```
 
 
-### 2. 실행
-
-
-`main.py` 파일을 실행하여 프롬프트를 생성할 수 있습니다.
-
-```bash
-python main.py
-```
-
-
-### 3. 설정
+### 2. 설정
 
 
 필요한 파일 및 디렉토리를 무시하고 싶다면, `exclude`리스트에 추가하세요.
 
 ```python
-exclude = ["node_modules", ".git", "README.md", ".gitignore"]
+exclude = [
+            "node_modules", ".git", "example.txt", "README.md", 
+            ".gitignore", ".next", ".png", ".webp", "yarn.lock"
+        ]
 ```
 
 `user_instruction`에 원하는 지시사항을 추가해, 생성되는 프롬프트의 내용을 맞춤 설정할 수 있습니다.
 
 ```python
 user_instruction = "Please help me build a web app based on this structure."
+```
+
+
+### 3. 실행
+
+
+`main.py` 파일을 실행하여 프롬프트를 생성할 수 있습니다.
+
+```bash
+python main.py
 ```
 
 

@@ -105,7 +105,10 @@ def main(root_path, exclude=None, include=None, user_instruction=None):
 
 # Example usage:
 root_path = r"../o1 Prompter"
-exclude = ["node_modules", ".git", "example.txt", "README.md", ".gitignore", ".next", ".png", ".webp", "yarn.lock"]  # Exclude PNG files
+exclude = [
+            "node_modules", ".git", "example.txt", "README.md", 
+            ".gitignore", ".next", ".png", ".webp", "yarn.lock"
+        ]
 include = None  # Include all files if None
 user_instruction = "Please help me build a web app based on this structure."
 

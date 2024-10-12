@@ -36,7 +36,27 @@ cd  ppm
 ```
 
 
-### 2. Execution
+
+### 2. Configuration
+
+
+If you want to exclude specific files and directories, add them to the `exclude` list.
+
+```python
+exclude = [
+            "node_modules", ".git", "example.txt", "README.md", 
+            ".gitignore", ".next", ".png", ".webp", "yarn.lock"
+        ]
+```
+
+You can customize the content of the generated prompt by adding your desired instructions to `user_instruction`.
+
+```python
+user_instruction = "Please help me build a web app based on this structure."
+```
+
+
+### 3. Execution
 
 
 You can run the `main.py` file to generate the prompt.
@@ -45,21 +65,6 @@ You can run the `main.py` file to generate the prompt.
 python main.py
 ```
 
-
-### 3. Configuration
-
-
-If you want to exclude specific files and directories, add them to the `exclude` list.
-
-```python
-exclude = ["node_modules", ".git", "README.md", ".gitignore"]
-```
-
-You can customize the content of the generated prompt by adding your desired instructions to `user_instruction`.
-
-```python
-user_instruction = "Please help me build a web app based on this structure."
-```
 
 
 ## 🛠️ Usage Example
