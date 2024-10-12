@@ -1,8 +1,8 @@
-# 📜 o1 Prompter
+# 📜 PPM
 
   
 
-**o1 Prompter**는 소프트웨어 개발을 위한 효율적인 **코딩 프롬프트 생성 도구**입니다. 
+**PPM(Project Prompt Master)**는 소프트웨어 개발을 위한 효율적인 **코딩 프롬프트 생성 도구**입니다. 
 이 도구는 프로젝트 전체 구조와 파일 내용을 바탕으로, 코드 생성을 도와주는 프롬프트를 자동으로 생성합니다. 
 특히 대규모 프로젝트에서 빠르게 파일 구조를 분석하고, 필요한 코드를 명확하게 제시할 수 있습니다.
 
@@ -30,9 +30,9 @@
 
 
 ```bash
-git  clone  https://github.com/yourusername/o1-prompter.git
+git  clone  https://github.com/habaekk/ppm.git
 
-cd  o1-prompter
+cd  ppm
 ```
 
 
@@ -75,13 +75,13 @@ python main.py
 **Task**: Based on the following project structure and file contents, generate code to help the user build a software application.
 
 ### 1. README File Content:
-# o1 Prompter
+# ppm
 
 ### 2. Whole project file path structure:
-- o1 Prompter/main.py
+- ppm/main.py
 
 ### 3. Each content of files:
-#### File: `o1 Prompter/main.py`
+#### File: `ppm/main.py`
 ...
 
 ### 4. System Instruction:
@@ -102,13 +102,13 @@ python main.py
 ### 6. User's Instruction:
 	Please help me build a web app based on this structure.
 ```
-이제 이 프롬프트를 사용하는 LLM 모델(ChatGPT)에 입력해주세요.
+이제 이 프롬프트를 사용하는 LLM 모델(ChatGPT o1)에 입력해주세요.
 
 ## 📂 프로젝트 구조
 
 
 ```bash
-o1-prompter/
+ppm/
 ├── main.py			# 프롬프트 생성 메인 스크립트
 ├── result_prompt.txt		# 생성된 프롬프트 결과물
 ├── README.md			# 프로젝트 설명 파일

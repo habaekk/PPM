@@ -1,8 +1,8 @@
-# 📜 o1 Prompter
+# 📜 PPM
 
   
 
-**o1 Prompter** is an efficient **coding prompt generation tool** for software development.
+**PPM(Project Prompt Master)** is an efficient **coding prompt generation tool** for software development.
 This tool automatically generates prompts to assist with code creation based on the entire project structure and file contents.
 It is particularly useful for large projects, allowing for rapid analysis of the file structure and providing clear code suggestions.
 
@@ -30,9 +30,9 @@ It is particularly useful for large projects, allowing for rapid analysis of the
 
 
 ```bash
-git  clone  https://github.com/yourusername/o1-prompter.git
+git  clone  https://github.com/habaekk/ppm.git
 
-cd  o1-prompter
+cd  ppm
 ```
 
 
@@ -76,13 +76,13 @@ The following prompt will be generated:
 **Task**: Based on the following project structure and file contents, generate code to help the user build a software application.
 
 ### 1. README File Content:
-# o1 Prompter
+# ppm
 
 ### 2. Whole project file path structure:
-- o1 Prompter/main.py
+- ppm/main.py
 
 ### 3. Each content of files:
-#### File: `o1 Prompter/main.py`
+#### File: `ppm/main.py`
 ...
 
 ### 4. System Instruction:
@@ -103,12 +103,12 @@ The following prompt will be generated:
 ### 6. User's Instruction:
 	Please help me build a web app based on this structure.
 ```
-Now, please input this prompt into the LLM model (ChatGPT).
+Now, please input this prompt into the LLM model (ChatGPT o1).
 ## 📂 Project Structure
 
 
 ```bash
-o1-prompter/
+ppm/
 ├── main.py			# Prompt Generation Main Script
 ├── result_prompt.txt		# Generated Prompt Output
 ├── README.md				
