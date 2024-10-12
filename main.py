@@ -8,7 +8,8 @@ def get_project_info(root_path, exclude=None, include=None):
         dirs[:] = [d for d in dirs if d not in exclude]
         
         for file in files:
-            if (exclude and any(excl in file for excl in exclude)) or (include and file not in include):
+            # Skip files that match exclude patterns or have extensions like .png
+            if (exclude and any(excl in file or file.endswith(excl) for excl in exclude)) or (include and file not in include):
                 continue
             file_path = os.path.join(root, file)
             try:
@@ -46,13 +47,13 @@ def generate_prompt(project_structure, readme_content, user_instruction, root_pa
     ### 1. README File Content:
     {readme_content}
 
-    ###2. Whole project file path structure:
+    ### 2. Whole project file path structure:
     {project_structure_prompt}
     
-    ###3. Each content of files:
+    ### 3. Each content of files:
     {project_content_prompt}
 
-    ###4. System Instruction:
+    ### 4. System Instruction:
         The user wants help to build a web application. Based on the project structure and contents provided, 
         generate appropriate code and explanations to guide them in the process. Focus on the following requirements:
             - Analyze the provided file structure and suggest improvements or additions if necessary.
@@ -96,15 +97,15 @@ def main(root_path, exclude=None, include=None, user_instruction=None):
     prompt = generate_prompt(project_structure, readme_content, user_instruction, root_path)
     
     # Save the prompt to a txt file (overwrite mode)
-    output_file = os.path.join(root_path, 'result_prompt.txt')
+    output_file = os.path.join('./', 'result_prompt.txt')
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write(prompt)
     
     print(f"Prompt saved to {output_file}")
 
 # Example usage:
-root_path = r"..\o1 Prompter"
-exclude = ["node_modules", ".git", "example.txt", "README.md", ".gitignore"]
+root_path = r"../o1 Prompter"
+exclude = ["node_modules", ".git", "example.txt", "README.md", ".gitignore", ".next", ".png", ".webp", "yarn.lock"]  # Exclude PNG files
 include = None  # Include all files if None
 user_instruction = "Please help me build a web app based on this structure."
 
