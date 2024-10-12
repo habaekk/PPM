@@ -118,7 +118,7 @@ o1-prompter/
 
 ## 📋 How to Contribute
 
-If you would like to contribute to the project, feel free to leave feedback in the [Issues](https://github.com/habaekk/o1-prompter/issues) or submit a PR (Pull Request)!
+If you would like to contribute to the project, feel free to leave feedback in the [Issues](https://github.com/habaekk/ppm/issues) or submit a PR (Pull Request)!
 
 1. fork and create a new branch:
 	```bash

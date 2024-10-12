@@ -119,7 +119,7 @@ o1-prompter/
 ## 📋 기여 방법
 
 
-프로젝트에 기여하고 싶다면 언제든지 [이슈](https://github.com/habaekk/o1-prompter/issues)에 피드백을 남기거나 PR(Pull Request)를 제출해 주세요!
+프로젝트에 기여하고 싶다면 언제든지 [이슈](https://github.com/habaekk/ppm/issues)에 피드백을 남기거나 PR(Pull Request)를 제출해 주세요!
 
 1. 포크(fork) 한 뒤 새로운 브랜치를 만듭니다:
 	```bash
