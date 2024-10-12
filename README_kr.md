@@ -109,10 +109,10 @@ python main.py
 
 ```bash
 o1-prompter/
-├── main.py					# 프롬프트 생성 메인 스크립트
+├── main.py			# 프롬프트 생성 메인 스크립트
 ├── result_prompt.txt		# 생성된 프롬프트 결과물
-├── README.md				# 프로젝트 설명 파일
-└── .gitignore				# Git 무시 파일
+├── README.md			# 프로젝트 설명 파일
+└── .gitignore			# Git 무시 파일
 ```
 
 
