@@ -1,6 +1,8 @@
 # 📜 PPM(Project Prompt Master)
 
-  
+[English](https://github.com/habaekk/PPM) | [한국어](https://github.com/habaekk/PPM/blob/main/README_kr.md)
+
+    
 
 **PPM** is an efficient **coding prompt generation tool** for software development.
 This tool automatically generates prompts to assist with code creation based on the entire project structure and file contents.

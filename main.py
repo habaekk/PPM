@@ -104,12 +104,12 @@ def main(root_path, exclude=None, include=None, user_instruction=None):
     print(f"Prompt saved to {output_file}")
 
 # Example usage:
-root_path = r"../o1 Prompter"
+root_path = r"C:\Users\habac\OneDrive\Documents\_projects\XCode\Where-is-the-Moon-AR"
 exclude = [
             "node_modules", ".git", "example.txt", "README.md", 
             ".gitignore", ".next", ".png", ".webp", "yarn.lock"
         ]
 include = None  # Include all files if None
-user_instruction = "Please help me build a web app based on this structure."
+user_instruction = "이 프로젝트에 대해 리드미 파일을 줘"
 
 main(root_path, exclude, include, user_instruction)

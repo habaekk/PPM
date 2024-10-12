@@ -3,128 +3,1824 @@
         Based on the following project structure and file contents, generate code to help the user build a web application.
 
     ### 1. README File Content:
-    #o1 Promopter#
+    # Where is the Moon? AR
+You can see exact moon position with IPhone.  
+IDE: XCode   
+Testing Device: IPhone12
+
+## Description
+This is an IOS Application using AR to observe a position of ot the moon.
+
+## ScreenShot
+![CV_moonLat](https://github.com/habaekk/moonAR/assets/74465964/904b78ff-ef07-4a45-8272-d8e40af79572)  
+![moonTime](https://github.com/habaekk/Where-is-the-Moon-AR/assets/74465964/9dab262c-2fb5-4bbe-be70-33f7f7117b8c)
+
+## DEMO
+Latitude: 37, Moon Phase: First Quater, Time: 22.53  
+The moon is falling to the West Sky.  
+https://youtube.com/shorts/ytwRV9STICQ 
+
 
     ### 2. Whole project file path structure:
-    - o1 Prompter/main.py
+    - Where-is-the-Moon-AR/.DS_Store
+- Where-is-the-Moon-AR/arTest\AppDelegate.swift
+- Where-is-the-Moon-AR/arTest\ARView.swift
+- Where-is-the-Moon-AR/arTest\ContentView.swift
+- Where-is-the-Moon-AR/arTest\Info.plist
+- Where-is-the-Moon-AR/arTest\K.swift
+- Where-is-the-Moon-AR/arTest\locationManager.swift
+- Where-is-the-Moon-AR/arTest\moonHelper.swift
+- Where-is-the-Moon-AR/arTest\urlManager.swift
+- Where-is-the-Moon-AR/arTest\Assets.xcassets\Contents.json
+- Where-is-the-Moon-AR/arTest\Assets.xcassets\AccentColor.colorset\Contents.json
+- Where-is-the-Moon-AR/arTest\Assets.xcassets\AppIcon.appiconset\Contents.json
+- Where-is-the-Moon-AR/arTest\Experience.rcproject\com.apple.RCFoundation.Project
+- Where-is-the-Moon-AR/arTest\Experience.rcproject\Library\ProjectLibrary\Contents.json
+- Where-is-the-Moon-AR/arTest\Experience.rcproject\Library\ProjectLibrary\Version.json
+- Where-is-the-Moon-AR/arTest\Experience.rcproject\SceneThumbnails\F9610871-0955-494F-A5C3-51D1A281BAB3.thumbnails\square
+- Where-is-the-Moon-AR/arTest\Experience.rcproject\SceneThumbnails\F9610871-0955-494F-A5C3-51D1A281BAB3.thumbnails\wide
+- Where-is-the-Moon-AR/arTest\Preview Content\Preview Assets.xcassets\Contents.json
+- Where-is-the-Moon-AR/arTest.xcodeproj\project.pbxproj
+- Where-is-the-Moon-AR/arTest.xcodeproj\project.xcworkspace\contents.xcworkspacedata
+- Where-is-the-Moon-AR/arTest.xcodeproj\project.xcworkspace\xcshareddata\IDEWorkspaceChecks.plist
+- Where-is-the-Moon-AR/arTest.xcodeproj\project.xcworkspace\xcuserdata\habaek.xcuserdatad\UserInterfaceState.xcuserstate
+- Where-is-the-Moon-AR/arTest.xcodeproj\xcuserdata\habaek.xcuserdatad\xcschemes\xcschememanagement.plist
 
     
     ### 3. Each content of files:
-    
-#### File: `o1 Prompter/main.py`
-```
-import os
 
-def get_project_info(root_path, exclude=None, include=None):
-    project_structure = {}
-    
-    for root, dirs, files in os.walk(root_path):
-        # Exclude directories like .git by modifying dirs in-place
-        dirs[:] = [d for d in dirs if d not in exclude]
+
+#### File: `Where-is-the-Moon-AR/arTest\AppDelegate.swift`
+```
+//
+//  AppDelegate.swift
+//  arTest
+//
+//  Created by macbook1 on 2023/05/04.
+//
+
+import UIKit
+import SwiftUI
+
+@main
+class AppDelegate: UIResponder, UIApplicationDelegate {
+
+    var window: UIWindow?
+
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+
+        // Create the SwiftUI view that provides the window contents.
+        let contentView = ContentView()
+
+        // Use a UIHostingController as window root view controller.
+        let window = UIWindow(frame: UIScreen.main.bounds)
+        window.rootViewController = UIHostingController(rootView: contentView)
+        self.window = window
+        window.makeKeyAndVisible()
+        return true
+    }
+
+    func applicationWillResignActive(_ application: UIApplication) {
+        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
+        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+    }
+
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
+    }
+
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+    }
+
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    }
+
+
+}
+
+
+```
+
+#### File: `Where-is-the-Moon-AR/arTest\ARView.swift`
+```
+//
+//  ARView.swift
+//  arTest
+//
+//  Created by macbook1 on 2023/05/17.
+//
+
+import SwiftUI
+import RealityKit
+
+struct ARViewContainer: UIViewRepresentable {
+    @ObservedObject private var locationManager = LocationManager()
+
         
-        for file in files:
-            # Skip files that match exclude patterns or have extensions like .png
-            if (exclude and any(excl in file or file.endswith(excl) for excl in exclude)) or (include and file not in include):
-                continue
-            file_path = os.path.join(root, file)
-            try:
-                with open(file_path, 'r', encoding='utf-8') as f:
-                    content = f.read()
-            except (UnicodeDecodeError, Exception):
-                try:
-                    with open(file_path, 'r', encoding='latin-1') as f:  # Fallback encoding
-                        content = f.read()
-                except Exception as e:
-                    content = f"Error reading file: {e}"
-            project_structure[file_path] = content
+    func makeUIView(context: Context) -> ARView {
+        
+        let arView = ARView(frame: .zero)
+        
+        // Load the "Box" scene from the "Experience" Reality File
+        let boxAnchor = try! Experience.loadBox()
+
+        // Add the box anchor to the scene
+        arView.scene.anchors.append(boxAnchor)
+        
+        boxAnchor.actions.notifier.onAction = sceneStart
+        
+        return arView
+        
+    }
+    
+    func sceneStart(_ entity: Entity?) -> Void {
+        
+        let moonHelper = MoonHelper()
+//        print("Scene Start")
+        UrlManager().urlRequest(with: UrlManager().urlManager()) { lunDay in
             
-    return project_structure
-
-# Function to generate the prompt with the root folder name automatically parsed
-def generate_prompt(project_structure, readme_content, user_instruction, root_path):
-    # Automatically parse the project name from the root path
-    project_name = os.path.basename(root_path)
-
-    project_structure_prompt = ""
-    for path in project_structure:
-        relative_path = os.path.relpath(path, root_path)
-        project_structure_prompt += f"- {project_name}/{relative_path}\n"
-
-    project_content_prompt = ""
-    for path, content in project_structure.items():
-        relative_path = os.path.relpath(path, root_path)
-        project_content_prompt += f"\n#### File: `{project_name}/{relative_path}`\n```\n{content}\n```\n"
-
-    main_prompt = f"""
-    **Task**:
-        Based on the following project structure and file contents, generate code to help the user build a web application.
-
-    ### 1. README File Content:
-    {readme_content}
-
-    ### 2. Whole project file path structure:
-    {project_structure_prompt}
+            let currentDate = Date()
+            let timediff = moonHelper.getTimeDifferenceSunMoon(lunDay: lunDay)
+//            let timediff = moonHelper.getTimeDifferenceSunMoon(lunDay:15)
+            let currentLatitude = Float(locationManager.userLatitude)
+//            let currentLatitude = Float(60.0)
+            let currentHeading = Float(locationManager.userHeading)
+            
+            let currentMonth = Calendar.current.component(.month, from: currentDate)
+            let currentHour = Calendar.current.component(.hour, from: currentDate)
+//            let currentHour = 0
+            let currentMinute = Calendar.current.component(.minute, from: currentDate)
+//            let currentMinute = 0
+            let currentTimeFloat = moonHelper.timeToFloat(h: currentHour, m: currentMinute)
+            
+            let seasonConstant = moonHelper.getSeasonConstant(month: currentMonth)
+            
+            
+            if (moonHelper.isMoonRise(sunTime: currentTimeFloat, timeDifference: timediff)) {
+            
+//            if (true) {
+                
+                let x = moonHelper.getXPos(sunTime: currentTimeFloat, timeDifference: timediff)
+                let y = moonHelper.getYPos(x: x, s: seasonConstant, lat: currentLatitude)
+                let z = moonHelper.getZPos(x: x, s: seasonConstant, lat: currentLatitude)
+                
+                let rotated = moonHelper.rotation(x: x , y: y, z: z, headingValue: currentHeading)
+                let adjusted = moonHelper.cameraPosAdjust(x: rotated[0], y: rotated[1], z: rotated[2])
+//                let adjusted = moonHelper.cameraPosAdjust(x: x, y: y, z: z)
+                
+                entity?.transform.translation.x = adjusted[0]
+                entity?.transform.translation.y = adjusted[1]
+                entity?.transform.translation.z = adjusted[2]
+            }
+        }
+    }
     
-    ### 3. Each content of files:
-    {project_content_prompt}
-
-    ### 4. System Instruction:
-        The user wants help to build a web application. Based on the project structure and contents provided, 
-        generate appropriate code and explanations to guide them in the process. Focus on the following requirements:
-            - Analyze the provided file structure and suggest improvements or additions if necessary.
-            - If there are any missing components for building a web app (e.g., templates, routes, server setup), suggest appropriate steps or provide the necessary code.
-            - Provide clear and modular code snippets, with explanations, where applicable.
-            - Ensure the project structure follows best practices for web applications.
-            - The project should be ready to run locally on the user's machine.
-
-    ### 5. Expected Output:
-        The output should include:
-            1. An analysis of the current project structure.
-            2. Suggested improvements and additional code where needed.
-            3. Detailed explanations of how the user can use the provided code to set up the web application.
-
-    ### 6. User's Instruction:
-    {user_instruction}
-    """
+    func updateUIView(_ uiView: ARView, context: Context) {}
     
-    return main_prompt
+}
 
-# Main function to execute
-def main(root_path, exclude=None, include=None, user_instruction=None):
-    # Read README content if it exists
-    readme_path = os.path.join(root_path, 'README.md')
-    readme_content = ""
-    if os.path.exists(readme_path):
-        with open(readme_path, 'r', encoding='utf-8') as f:
-            readme_content = f.read()
-    else:
-        readme_content = "README.md not found"
-    
-    # Ensure result_prompt.txt is excluded from analysis
-    if exclude is None:
-        exclude = []
-    exclude.append("result_prompt.txt")
-    
-    # Get project structure and contents
-    project_structure = get_project_info(root_path, exclude, include)
-    
-    # Generate prompt
-    prompt = generate_prompt(project_structure, readme_content, user_instruction, root_path)
-    
-    # Save the prompt to a txt file (overwrite mode)
-    output_file = os.path.join('./', 'result_prompt.txt')
-    with open(output_file, 'w', encoding='utf-8') as f:
-        f.write(prompt)
-    
-    print(f"Prompt saved to {output_file}")
+```
 
-# Example usage:
-root_path = r"../o1 Prompter"
-exclude = ["node_modules", ".git", "example.txt", "README.md", ".gitignore", ".next", ".png", ".webp", "yarn.lock"]  # Exclude PNG files
-include = None  # Include all files if None
-user_instruction = "Please help me build a web app based on this structure."
+#### File: `Where-is-the-Moon-AR/arTest\ContentView.swift`
+```
+//
+//  ContentView.swift
+//  arTest
+//
+//  Created by macbook1 on 2023/05/04.
+//
 
-main(root_path, exclude, include, user_instruction)
+import SwiftUI
+import RealityKit
+import CoreLocation
+import CoreLocationUI
+
+struct ContentView : View {
+    var body: some View {
+        
+        
+        
+        //let currentMinute = Calendar.current.component(.minute, from: currentDate)
+        
+        
+        VStack {
+            
+            Button(action: {
+                // Request location permission again
+                CLLocationManager().requestWhenInUseAuthorization()
+            }) {
+                Text("Request Location Permission")
+            }
+            .padding()
+            
+            ARViewContainer().edgesIgnoringSafeArea(.all)
+            
+        }
+    }
+}
+
+
+
+#if DEBUG
+struct ContentView_Previews : PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
+#endif
+
+
+//if (CLLocationManager.headingAvailable()) {
+//    Text("Available")
+//    //ARViewContainer().edgesIgnoringSafeArea(.all)
+//} else {
+//    Text("Heading is not available.")
+//    }
+//}
+
+```
+
+#### File: `Where-is-the-Moon-AR/arTest\Info.plist`
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+</dict>
+</plist>
+
+```
+
+#### File: `Where-is-the-Moon-AR/arTest\K.swift`
+```
+//
+//  K.swift
+//  arTest
+//
+//  Created by macbook1 on 2023/05/23.
+//
+
+import Foundation
+
+struct K {
+    
+}
+
+extension K {
+    struct api {
+        static let key = "09A8ubsQbqLsACly93FT47Rcz545J46brvmBA9MfQF5VlDcC%2BU7X4u2jK3GwEWh57%2FAbQO0e8G1597P0WDzYlA%3D%3D"
+    }
+}
+
+
+```
+
+#### File: `Where-is-the-Moon-AR/arTest\locationManager.swift`
+```
+//
+//  locationManager.swift
+//  arTest
+//
+//  Created by macbook1 on 2023/05/17.
+//
+
+import Foundation
+import CoreLocation
+import SwiftUI
+
+class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+    private let locationManager = CLLocationManager()
+    
+    @Published var userLatitude: Double = 0.0
+    @Published var userHeading: Double = 0.0
+    
+    override init() {
+        super.init()
+        self.locationManager.delegate = self
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        self.locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingHeading()
+        
+        if CLLocationManager.locationServicesEnabled() {
+            self.locationManager.requestLocation ()
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
+        userLatitude = location.coordinate.latitude
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error)
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+        userHeading = newHeading.magneticHeading        
+    }
+}
+
+```
+
+#### File: `Where-is-the-Moon-AR/arTest\moonHelper.swift`
+```
+//
+//  MoonHelper.swift
+//  arTest
+//
+//  Created by macbook1 on 2023/05/19.
+//
+
+import Foundation
+
+class MoonHelper {
+    
+    // 태양의 남중고도
+    func getMeridianAltitude(lat: Float) -> Int {
+        return Int(90 - lat)
+    }
+    
+    // '각' 을 래디안 값으로 변환
+    func getRadian(degree: Float) -> Float {
+        return (degree * 0.0174533)
+    }
+    
+    // 계절마다 남중고도가 변화함
+    // 여름에 76.5도, 겨울에 29.5도, 봄가을에 53도
+    // 계절 마다 변하는 남중고도를 위한 상수값
+    func getSeasonConstant(month: Int) -> Float {
+        
+        var const: Float = 0.0
+        // precisly: 0.6625774592
+        
+        switch month {
+        case 12:
+            fallthrough
+        case 1...2:
+            const = -0.6625
+        case 3...5:
+            const = 0
+        case 6...8:
+            const = 0.6625
+        case 9...11:
+            const = 0
+        default:
+            print("MoonHelper.swift :: default of season constant.")
+        }
+        
+        return const
+    }
+    
+    // 달의 현재 위치 x, y, z
+    // x 값에 따라 달의 궤도에 y, z 값을 구함
+    // 현재 시간에 따라 x 값을 구함
+    
+    // 카메라 위치는 <0,0,0.5>
+    // 카메라 방향은 -z 쪽을 바라 봄.
+    
+    // '달의 일주 궤도'를 포함하는 평면이 있고
+    // 가상의 하늘(구) 인 천구가 있음
+    // 평면과 천구상의 교선을 통해 '달의 일주 궤도(원)' 을 구함
+    // 남중고도와 x 값이 주어지면, y z 를 구할 수 있음
+    
+    func getXPos(sunTime: Float, timeDifference: Double) -> Float {
+        var moonTime = Double(sunTime) - timeDifference
+        
+        if moonTime < 0 {
+            moonTime += 24
+        }
+        
+        return -cos(getRadian(degree: Float((moonTime - 6) * 15)))
+    }
+    
+    func getYPos(x: Float, s: Float, lat: Float) -> Float
+    {
+        let theta: Float = getRadian(degree: (90 - lat))
+        var a: Float = 1.0
+        var b: Float = 1.0
+        var c: Float = 1.0
+        
+        a = pow(tan(theta), 2) + 1
+        b = -2*s
+        c = pow(x, 2) * pow(tan(theta), 2) + pow(s, 2) - pow(tan(theta), 2)
+
+        let yPos = ((-b + (pow(b,2)-4*a*c).squareRoot()) / (2*a))
+        
+        return yPos
+    }
+    
+    func getZPos(x: Float, s: Float, lat: Float) -> Float
+    {
+        let theta: Float = getRadian(degree: (90 - lat))
+        var a: Float = 1.0
+        var b: Float = 1.0
+        var c: Float = 1.0
+        
+        a = pow(tan(theta), 2) + 1
+        b = -2*s*tan(theta)
+        c = pow(x, 2) + pow(s, 2) - 1
+
+        let zPos = ((-b - (pow(b,2)-4*a*c).squareRoot()) / (2*a))
+        
+        return zPos
+    }
+    
+    // 달의 위상에 따른 태양과의 상대적인 위치를 보정하기 위함
+    func getTimeDifferenceSunMoon(lunDay: Int) -> Double {
+        return (Double(lunDay) * (360/29.5)) * (1/15)
+    }
+    
+    
+    // 하늘에서 달이 안 보이면 AR월드 에서도 달을 띄우지 않기 위함
+    func isMoonRise(sunTime: Float, timeDifference: Double) -> Bool {
+        
+        var moonTime = Double(sunTime) - timeDifference
+        
+        if moonTime < 0 {
+            moonTime += 24
+        }
+        
+        if (sunTime >= 18) || (sunTime <= 6) {
+            if (moonTime >= 6) && (moonTime <= 18) {
+                return true
+            }
+        }
+        
+        return false
+    }
+    
+    // y 축을 기준으로 로테이션 수행
+    // 디바이스가 바라보는 방향(동서남북) 에 따라 달의 위치를 보정하기 위함
+    func rotation(x: Float, y: Float, z: Float, headingValue: Float) -> [Float] {
+        let theta = headingValue - 180.0
+        
+        let rX = x * cos(getRadian(degree: theta)) + z * sin(getRadian(degree: theta))
+        let rY = y
+        let rZ = -x * sin(getRadian(degree: theta)) + z * cos(getRadian(degree: theta))
+        
+        return [rX, rY, rZ]
+    }
+    
+    // 카메라 위치에 따른 좌표값 수정
+    func cameraPosAdjust(x: Float, y: Float, z: Float) -> [Float] {
+        let aX = x
+        let aY = y
+        let aZ = z + 0.5
+        
+        return [aX, aY, aZ]
+    }
+    
+    // 시간을 십진수로 바꿈
+    func timeToFloat(h: Int, m: Int) -> Float {
+        let result = Float(h) + (Float(m) / 60.0)
+        return result
+    }
+    
+}
+
+```
+
+#### File: `Where-is-the-Moon-AR/arTest\urlManager.swift`
+```
+//
+//  urlManager.swift
+//  arTest
+//
+//  Created by macbook1 on 2023/05/23.
+//
+
+import Foundation
+
+class UrlManager {
+    func urlRequest(with str: String, completion:@escaping(Int) -> ()){
+        let url = URL(string: str)!
+        var req = ""
+        let task = URLSession.shared.dataTask(with: url) {(data, response, error) in
+            if let err = error {
+                print (err)
+                return
+            }
+            guard let data = data else { return }
+            req = String(data: data, encoding: .utf8)!
+            completion(self.dataParsing(with: req))
+        }
+        task.resume()
+    }
+    
+    func urlManager() -> String {
+        let key = K.api.key
+        let api = "https://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoService/getLunCalInfo?"
+        let date = Date()
+        
+        let calendarDate = Calendar.current.dateComponents([.day, .year, .month], from: date)
+        
+        let d = calendarDate.day!
+        let m = calendarDate.month!
+        let year = String(calendarDate.year!)
+        
+        var day: String
+        var month: String
+        
+        if d < 10 {
+            day = "0" + String(d)
+        } else {
+            day = String(d)
+        }
+        
+        if m < 10 {
+            month = "0" + String(m)
+        } else {
+            month = String(m)
+        }
+        
+        let url = "\(api)solYear=\(year)&solMonth=\(month)&solDay=\(day)&ServiceKey=\(key)"
+        return url
+    }
+    
+    func dataParsing(with str: String) -> Int {
+        
+        if let range: Range<String.Index> = str.range(of: "lunDay") {
+            let index: Int = str.distance(from: str.startIndex, to: range.lowerBound)
+            var lunDay: Int
+            var idx = str.index(str.startIndex, offsetBy:index+8)
+            if str[idx] == "<" {
+                idx = str.index(str.startIndex, offsetBy:index+7)
+                lunDay = Int(String(str[idx]))!
+            } else {
+                idx = str.index(str.startIndex, offsetBy:index+7)
+                let ten = Int(String(str[idx]))! * 10
+                idx = str.index(str.startIndex, offsetBy:index+8)
+                let one = Int(String(str[idx]))!
+                lunDay = ten + one
+            }
+            return lunDay
+        }
+        else {
+            print("substring not found")
+            return 0
+        }
+    }
+}
+
+```
+
+#### File: `Where-is-the-Moon-AR/arTest\Assets.xcassets\Contents.json`
+```
+{
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
+
+```
+
+#### File: `Where-is-the-Moon-AR/arTest\Assets.xcassets\AccentColor.colorset\Contents.json`
+```
+{
+  "colors" : [
+    {
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
+
+```
+
+#### File: `Where-is-the-Moon-AR/arTest\Assets.xcassets\AppIcon.appiconset\Contents.json`
+```
+{
+  "images" : [
+    {
+      "idiom" : "universal",
+      "platform" : "ios",
+      "size" : "1024x1024"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
+
+```
+
+#### File: `Where-is-the-Moon-AR/arTest\Experience.rcproject\com.apple.RCFoundation.Project`
+```
+{
+  "__content" : [
+    {
+      "scenes" : [
+        {
+          "__content" : [
+            {
+              "arAnchorSpecification" : {
+                "alignment" : "horizontal",
+                "name" : "surface"
+              },
+              "behaviors" : [
+                {
+                  "__content" : [
+                    {
+                      "accessibility" : {
+                        "__content" : [
+                          {
+                            "isEnabled" : false
+                          }
+                        ],
+                        "__version" : 1
+                      },
+                      "actionGroups" : [
+                        {
+                          "__content" : [
+                            {
+                              "configurations" : [
+                                {
+                                  "__content" : [
+                                    {
+                                      "configurationBox" : {
+                                        "configuration" : {
+                                          "target" : [
+                                            "73D0BE87-E587-4CCB-B70E-1794E7079790"
+                                          ],
+                                          "userIdentifier" : "notifier"
+                                        },
+                                        "name" : {
+                                          "type" : "custom"
+                                        }
+                                      },
+                                      "identifier" : "5B5C36EF-C150-4E62-9328-AF26F4BE5A88",
+                                      "isEnabled" : true
+                                    }
+                                  ],
+                                  "__version" : 1
+                                }
+                              ],
+                              "identifier" : "011EE737-C1A7-4F6C-B3E4-0704E272B11F",
+                              "isEnabled" : true
+                            }
+                          ],
+                          "__version" : 1
+                        }
+                      ],
+                      "color" : [
+                        0.364705890417099,
+                        0.74117648601531982,
+                        0.69019609689712524,
+                        1
+                      ],
+                      "identifier" : "A50EC864-2C32-40D1-BB90-5F515A1CC37F",
+                      "isEnabled" : true,
+                      "isLooping" : false,
+                      "isModal" : false,
+                      "name" : "Behavior",
+                      "triggers" : [
+                        {
+                          "__content" : [
+                            {
+                              "configurationBox" : {
+                                "configuration" : {
+
+                                },
+                                "name" : "start"
+                              },
+                              "identifier" : "0A920D09-E622-4EF8-9BE5-BD23DDB7B808",
+                              "isEnabled" : true
+                            }
+                          ],
+                          "__version" : 1
+                        }
+                      ]
+                    }
+                  ],
+                  "__version" : 3
+                }
+              ],
+              "gravity" : [
+                0,
+                -0,
+                0
+              ],
+              "identifier" : "F9610871-0955-494F-A5C3-51D1A281BAB3",
+              "material" : "concrete",
+              "overrides" : {
+                "children" : {
+                  "0FB1CD67-319D-4CAC-84A5-E984FBC97F3E" : {
+                    "overrides" : {
+                      "arguments" : [
+                        [
+                          "item",
+                          {
+                            "typeName" : "String",
+                            "value" : "Cue Ball"
+                          }
+                        ],
+                        [
+                          "material",
+                          {
+                            "typeName" : "String",
+                            "value" : "paintEnamelMatte"
+                          }
+                        ],
+                        [
+                          "materialColor",
+                          {
+                            "typeName" : "double4",
+                            "value" : [
+                              0.50999999046325684,
+                              0.85000002384185791,
+                              0.17000000178813934,
+                              1
+                            ]
+                          }
+                        ],
+                        [
+                          "style",
+                          {
+                            "typeName" : "String",
+                            "value" : "Iconic"
+                          }
+                        ]
+                      ],
+                      "children" : {
+                        "iconicItem" : {
+                          "overrides" : {
+                            "factory" : null,
+                            "runtimeAttributes" : [
+                              [
+                                "RuntimeIdentifier",
+                                {
+                                  "typeName" : "UUID",
+                                  "value" : "CE82FFB8-2CB2-49AE-BD66-49C64EB9773D"
+                                }
+                              ]
+                            ]
+                          }
+                        },
+                        "item" : {
+                          "overrides" : {
+                            "factory" : null,
+                            "runtimeAttributes" : [
+                              [
+                                "RuntimeIdentifier",
+                                {
+                                  "typeName" : "UUID",
+                                  "value" : "96CA2642-2700-48E7-B86C-F08AE6CDF8C4"
+                                }
+                              ]
+                            ]
+                          }
+                        }
+                      },
+                      "factory" : {
+                        "identifier" : "com.apple.rc.af.CueBall.5281c432-2187-4024-9419-ba65867bc5b3",
+                        "version" : "1.0"
+                      },
+                      "runtimeAttributes" : [
+                        [
+                          "RuntimeIdentifier",
+                          {
+                            "typeName" : "UUID",
+                            "value" : "3854644C-D326-4D24-9AF8-121344108546"
+                          }
+                        ]
+                      ]
+                    },
+                    "transform" : {
+                      "matrix" : [
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        0,
+                        0,
+                        -0.5,
+                        1
+                      ]
+                    }
+                  },
+                  "3A92EF11-A11D-4CD8-8C7D-2D396613B7D8" : {
+                    "overrides" : {
+                      "arguments" : [
+                        [
+                          "item",
+                          {
+                            "typeName" : "String",
+                            "value" : "Cue Ball"
+                          }
+                        ],
+                        [
+                          "material",
+                          {
+                            "typeName" : "String",
+                            "value" : "paintEnamelMatte"
+                          }
+                        ],
+                        [
+                          "materialColor",
+                          {
+                            "typeName" : "double4",
+                            "value" : [
+                              0.20000000298023224,
+                              0.20000000298023224,
+                              1,
+                              1
+                            ]
+                          }
+                        ],
+                        [
+                          "style",
+                          {
+                            "typeName" : "String",
+                            "value" : "Iconic"
+                          }
+                        ]
+                      ],
+                      "children" : {
+                        "iconicItem" : {
+                          "overrides" : {
+                            "factory" : null,
+                            "runtimeAttributes" : [
+                              [
+                                "RuntimeIdentifier",
+                                {
+                                  "typeName" : "UUID",
+                                  "value" : "438B9115-F9BB-4C93-B598-B1243E38F465"
+                                }
+                              ]
+                            ]
+                          }
+                        },
+                        "item" : {
+                          "overrides" : {
+                            "factory" : null,
+                            "runtimeAttributes" : [
+                              [
+                                "RuntimeIdentifier",
+                                {
+                                  "typeName" : "UUID",
+                                  "value" : "18ADD1C5-73BF-4A2D-B14F-824779355870"
+                                }
+                              ]
+                            ]
+                          }
+                        }
+                      },
+                      "factory" : {
+                        "identifier" : "com.apple.rc.af.CueBall.5281c432-2187-4024-9419-ba65867bc5b3",
+                        "version" : "1.0"
+                      },
+                      "runtimeAttributes" : [
+                        [
+                          "RuntimeIdentifier",
+                          {
+                            "typeName" : "UUID",
+                            "value" : "B76005A8-4E83-4432-842D-486330C03898"
+                          }
+                        ]
+                      ]
+                    },
+                    "transform" : {
+                      "matrix" : [
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        1,
+                        0,
+                        0.5,
+                        1
+                      ]
+                    }
+                  },
+                  "3A80540A-092A-4EF1-93F2-DCFAA0F9E949" : {
+                    "overrides" : {
+                      "arguments" : [
+                        [
+                          "item",
+                          {
+                            "typeName" : "String",
+                            "value" : "Cue Ball"
+                          }
+                        ],
+                        [
+                          "material",
+                          {
+                            "typeName" : "String",
+                            "value" : "paintEnamelMatte"
+                          }
+                        ],
+                        [
+                          "materialColor",
+                          {
+                            "typeName" : "double4",
+                            "value" : [
+                              1,
+                              0.20000000298023224,
+                              0.20000000298023224,
+                              1
+                            ]
+                          }
+                        ],
+                        [
+                          "style",
+                          {
+                            "typeName" : "String",
+                            "value" : "Iconic"
+                          }
+                        ]
+                      ],
+                      "children" : {
+                        "iconicItem" : {
+                          "overrides" : {
+                            "factory" : null,
+                            "runtimeAttributes" : [
+                              [
+                                "RuntimeIdentifier",
+                                {
+                                  "typeName" : "UUID",
+                                  "value" : "AFCD5D80-4EBE-4C27-9FF2-542132BF3973"
+                                }
+                              ]
+                            ]
+                          }
+                        },
+                        "item" : {
+                          "overrides" : {
+                            "factory" : null,
+                            "runtimeAttributes" : [
+                              [
+                                "RuntimeIdentifier",
+                                {
+                                  "typeName" : "UUID",
+                                  "value" : "7DC20D0D-A5C7-42BD-92AD-AE890CD806E9"
+                                }
+                              ]
+                            ]
+                          }
+                        }
+                      },
+                      "factory" : {
+                        "identifier" : "com.apple.rc.af.CueBall.5281c432-2187-4024-9419-ba65867bc5b3",
+                        "version" : "1.0"
+                      },
+                      "runtimeAttributes" : [
+                        [
+                          "RuntimeIdentifier",
+                          {
+                            "typeName" : "UUID",
+                            "value" : "20D350A3-F360-4335-87EA-BCEF1680A7E2"
+                          }
+                        ]
+                      ]
+                    },
+                    "transform" : {
+                      "matrix" : [
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        0,
+                        0,
+                        1.5,
+                        1
+                      ]
+                    }
+                  },
+                  "4A213441-135C-450E-8EF8-1A4EAB267C1D" : null,
+                  "7F5F1ADC-E5E4-4EF5-A5B5-FC43B071FFA5" : null,
+                  "10F384C9-0BD1-4CBB-99B3-F29BEE4E0C16" : null,
+                  "66BA0D16-6D1C-4A31-8D09-987CBB114092" : {
+                    "overrides" : {
+                      "arguments" : [
+                        [
+                          "item",
+                          {
+                            "typeName" : "String",
+                            "value" : "Cue Ball"
+                          }
+                        ],
+                        [
+                          "material",
+                          {
+                            "typeName" : "String",
+                            "value" : "paintEnamelMatte"
+                          }
+                        ],
+                        [
+                          "materialColor",
+                          {
+                            "typeName" : "double4",
+                            "value" : [
+                              0.85000002384185791,
+                              0.17000000178813934,
+                              0.50999999046325684,
+                              1
+                            ]
+                          }
+                        ],
+                        [
+                          "style",
+                          {
+                            "typeName" : "String",
+                            "value" : "Iconic"
+                          }
+                        ]
+                      ],
+                      "children" : {
+                        "iconicItem" : {
+                          "overrides" : {
+                            "factory" : null,
+                            "runtimeAttributes" : [
+                              [
+                                "RuntimeIdentifier",
+                                {
+                                  "typeName" : "UUID",
+                                  "value" : "68BA7C60-BDDF-493C-A1A5-EA40EF77BFCC"
+                                }
+                              ]
+                            ]
+                          }
+                        },
+                        "item" : {
+                          "overrides" : {
+                            "factory" : null,
+                            "runtimeAttributes" : [
+                              [
+                                "RuntimeIdentifier",
+                                {
+                                  "typeName" : "UUID",
+                                  "value" : "FFD6A6EB-4133-419F-9F34-A7F26CD758DB"
+                                }
+                              ]
+                            ]
+                          }
+                        }
+                      },
+                      "factory" : {
+                        "identifier" : "com.apple.rc.af.CueBall.5281c432-2187-4024-9419-ba65867bc5b3",
+                        "version" : "1.0"
+                      },
+                      "runtimeAttributes" : [
+                        [
+                          "RuntimeIdentifier",
+                          {
+                            "typeName" : "UUID",
+                            "value" : "47FB3878-E21E-4BD0-AA1D-AF7F300C99EE"
+                          }
+                        ]
+                      ]
+                    },
+                    "transform" : {
+                      "matrix" : [
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        0,
+                        1,
+                        0.5,
+                        1
+                      ]
+                    }
+                  },
+                  "632E476F-1E55-4E30-9723-1C51DD2E8B89" : null,
+                  "A7A8772F-CB45-4564-A8CA-82B4ACE5CC67" : {
+                    "overrides" : {
+                      "arguments" : [
+                        [
+                          "item",
+                          {
+                            "typeName" : "String",
+                            "value" : "Cue Ball"
+                          }
+                        ],
+                        [
+                          "material",
+                          {
+                            "typeName" : "String",
+                            "value" : "paintEnamelMatte"
+                          }
+                        ],
+                        [
+                          "materialColor",
+                          {
+                            "typeName" : "double4",
+                            "value" : [
+                              0.50999999046325684,
+                              0.17000000178813934,
+                              0.85000002384185791,
+                              1
+                            ]
+                          }
+                        ],
+                        [
+                          "style",
+                          {
+                            "typeName" : "String",
+                            "value" : "Iconic"
+                          }
+                        ]
+                      ],
+                      "children" : {
+                        "iconicItem" : {
+                          "overrides" : {
+                            "factory" : null,
+                            "runtimeAttributes" : [
+                              [
+                                "RuntimeIdentifier",
+                                {
+                                  "typeName" : "UUID",
+                                  "value" : "6FB7916E-5C6A-4E38-9939-60ABE0B76EA0"
+                                }
+                              ]
+                            ]
+                          }
+                        },
+                        "item" : {
+                          "overrides" : {
+                            "factory" : null,
+                            "runtimeAttributes" : [
+                              [
+                                "RuntimeIdentifier",
+                                {
+                                  "typeName" : "UUID",
+                                  "value" : "FFC5A24B-C111-4AD9-A083-C9B99AC08AB8"
+                                }
+                              ]
+                            ]
+                          }
+                        }
+                      },
+                      "factory" : {
+                        "identifier" : "com.apple.rc.af.CueBall.5281c432-2187-4024-9419-ba65867bc5b3",
+                        "version" : "1.0"
+                      },
+                      "runtimeAttributes" : [
+                        [
+                          "RuntimeIdentifier",
+                          {
+                            "typeName" : "UUID",
+                            "value" : "841B7517-E724-47E0-A4A4-941CB8A07456"
+                          }
+                        ]
+                      ]
+                    },
+                    "transform" : {
+                      "matrix" : [
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        -1,
+                        0,
+                        0.5,
+                        1
+                      ]
+                    }
+                  },
+                  "A27785BE-0380-4EC1-9AC9-57E500C28952" : null,
+                  "B91C7CA3-4AB1-4253-9A84-07383168A8A8" : null,
+                  "B867A022-62C6-40DF-AD3D-972C142F66D8" : {
+                    "overrides" : {
+                      "arguments" : [
+                        [
+                          "material",
+                          {
+                            "typeName" : "String",
+                            "value" : "plastic"
+                          }
+                        ],
+                        [
+                          "materialColor",
+                          {
+                            "typeName" : "double4",
+                            "value" : [
+                              0.69999998807907104,
+                              0.69999998807907104,
+                              0.14000000059604645,
+                              1
+                            ]
+                          }
+                        ],
+                        [
+                          "type",
+                          {
+                            "typeName" : "String",
+                            "value" : "sphere"
+                          }
+                        ]
+                      ],
+                      "factory" : {
+                        "identifier" : "com.apple.rc.af.CoreAssetFactories.PrimitiveShapeAssetFactory",
+                        "version" : "1.0"
+                      },
+                      "runtimeAttributes" : [
+                        [
+                          "RuntimeIdentifier",
+                          {
+                            "typeName" : "UUID",
+                            "value" : "73D0BE87-E587-4CCB-B70E-1794E7079790"
+                          }
+                        ]
+                      ]
+                    },
+                    "transform" : {
+                      "matrix" : [
+                        1.225835919380188,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1.225835919380188,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1.225835919380188,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1
+                      ]
+                    }
+                  }
+                },
+                "factory" : null,
+                "runtimeAttributes" : [
+                  [
+                    "isAccessibilityEnabled",
+                    {
+                      "typeName" : "Bool",
+                      "value" : false
+                    }
+                  ]
+                ]
+              },
+              "physicsMode" : "grid",
+              "title" : "Box",
+              "viewTransform" : {
+                "cameraTransform" : [
+                  0.99888575077056885,
+                  -9.3931165068283917e-09,
+                  -0.047193493694067001,
+                  0,
+                  -0.01403236947953701,
+                  0.95477259159088135,
+                  -0.29700586199760437,
+                  0,
+                  0.04505905881524086,
+                  0.29733717441558838,
+                  0.9537087082862854,
+                  0,
+                  0.66653633117675781,
+                  1.6568814516067505,
+                  4.1482391357421875,
+                  1
+                ],
+                "sceneTransform" : [
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0.99999994039535522,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0.99999994039535522,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1
+                ]
+              }
+            }
+          ],
+          "__version" : 5
+        }
+      ],
+      "tags" : {
+        "__content" : [
+          {
+            "tagsStore" : {
+
+            }
+          }
+        ],
+        "__version" : 1
+      }
+    }
+  ],
+  "__version" : 1
+}
+```
+
+#### File: `Where-is-the-Moon-AR/arTest\Experience.rcproject\Library\ProjectLibrary\Contents.json`
+```
+[
+
+]
+```
+
+#### File: `Where-is-the-Moon-AR/arTest\Experience.rcproject\Library\ProjectLibrary\Version.json`
+```
+{
+  "LibraryID" : "BBB5EDD2-CBE1-49E5-931D-2C81F724D19D",
+  "Version" : "1.0"
+}
+```
+
+
+#### File: `Where-is-the-Moon-AR/arTest\Preview Content\Preview Assets.xcassets\Contents.json`
+```
+{
+  "info" : {
+    "version" : 1,
+    "author" : "xcode"
+  }
+}
+```
+
+#### File: `Where-is-the-Moon-AR/arTest.xcodeproj\project.pbxproj`
+```
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		57AABA472A14C3D800801CC5 /* locationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AABA462A14C3D800801CC5 /* locationManager.swift */; };
+		57AABA492A14C7D800801CC5 /* ARView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AABA482A14C7D800801CC5 /* ARView.swift */; };
+		57AABA4D2A17625500801CC5 /* MoonHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AABA4C2A17625500801CC5 /* MoonHelper.swift */; };
+		57AABA752A1CB1BC00801CC5 /* urlManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AABA742A1CB1BC00801CC5 /* urlManager.swift */; };
+		57AABA772A1CB5B000801CC5 /* K.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AABA762A1CB5B000801CC5 /* K.swift */; };
+		57D21BA02A037D0E00041D2E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D21B9F2A037D0E00041D2E /* AppDelegate.swift */; };
+		57D21BA22A037D0E00041D2E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D21BA12A037D0E00041D2E /* ContentView.swift */; };
+		57D21BA42A037D0E00041D2E /* Experience.rcproject in Sources */ = {isa = PBXBuildFile; fileRef = 57D21BA32A037D0E00041D2E /* Experience.rcproject */; };
+		57D21BA62A037D1100041D2E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 57D21BA52A037D1100041D2E /* Assets.xcassets */; };
+		57D21BA92A037D1100041D2E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 57D21BA82A037D1100041D2E /* Preview Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		57AABA462A14C3D800801CC5 /* locationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = locationManager.swift; sourceTree = "<group>"; };
+		57AABA482A14C7D800801CC5 /* ARView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARView.swift; sourceTree = "<group>"; };
+		57AABA4C2A17625500801CC5 /* MoonHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoonHelper.swift; sourceTree = "<group>"; };
+		57AABA742A1CB1BC00801CC5 /* urlManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = urlManager.swift; sourceTree = "<group>"; };
+		57AABA762A1CB5B000801CC5 /* K.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = K.swift; sourceTree = "<group>"; };
+		57C1A5D32A1DD30B00F86B61 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		57D21B9C2A037D0E00041D2E /* arTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = arTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		57D21B9F2A037D0E00041D2E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		57D21BA12A037D0E00041D2E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		57D21BA32A037D0E00041D2E /* Experience.rcproject */ = {isa = PBXFileReference; lastKnownFileType = file.rcproject; path = Experience.rcproject; sourceTree = "<group>"; };
+		57D21BA52A037D1100041D2E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		57D21BA82A037D1100041D2E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		57D21B992A037D0E00041D2E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		57D21B932A037D0E00041D2E = {
+			isa = PBXGroup;
+			children = (
+				57D21B9E2A037D0E00041D2E /* arTest */,
+				57D21B9D2A037D0E00041D2E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		57D21B9D2A037D0E00041D2E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				57D21B9C2A037D0E00041D2E /* arTest.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		57D21B9E2A037D0E00041D2E /* arTest */ = {
+			isa = PBXGroup;
+			children = (
+				57C1A5D32A1DD30B00F86B61 /* Info.plist */,
+				57D21B9F2A037D0E00041D2E /* AppDelegate.swift */,
+				57D21BA12A037D0E00041D2E /* ContentView.swift */,
+				57AABA482A14C7D800801CC5 /* ARView.swift */,
+				57D21BA32A037D0E00041D2E /* Experience.rcproject */,
+				57D21BA52A037D1100041D2E /* Assets.xcassets */,
+				57D21BA72A037D1100041D2E /* Preview Content */,
+				57AABA4C2A17625500801CC5 /* MoonHelper.swift */,
+				57AABA462A14C3D800801CC5 /* locationManager.swift */,
+				57AABA742A1CB1BC00801CC5 /* urlManager.swift */,
+				57AABA762A1CB5B000801CC5 /* K.swift */,
+			);
+			path = arTest;
+			sourceTree = "<group>";
+		};
+		57D21BA72A037D1100041D2E /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				57D21BA82A037D1100041D2E /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		57D21B9B2A037D0E00041D2E /* arTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 57D21BAC2A037D1100041D2E /* Build configuration list for PBXNativeTarget "arTest" */;
+			buildPhases = (
+				57D21B982A037D0E00041D2E /* Sources */,
+				57D21B992A037D0E00041D2E /* Frameworks */,
+				57D21B9A2A037D0E00041D2E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = arTest;
+			productName = arTest;
+			productReference = 57D21B9C2A037D0E00041D2E /* arTest.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		57D21B942A037D0E00041D2E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1430;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					57D21B9B2A037D0E00041D2E = {
+						CreatedOnToolsVersion = 14.3;
+					};
+				};
+			};
+			buildConfigurationList = 57D21B972A037D0E00041D2E /* Build configuration list for PBXProject "arTest" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 57D21B932A037D0E00041D2E;
+			productRefGroup = 57D21B9D2A037D0E00041D2E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				57D21B9B2A037D0E00041D2E /* arTest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		57D21B9A2A037D0E00041D2E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57D21BA92A037D1100041D2E /* Preview Assets.xcassets in Resources */,
+				57D21BA62A037D1100041D2E /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		57D21B982A037D0E00041D2E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57AABA472A14C3D800801CC5 /* locationManager.swift in Sources */,
+				57AABA772A1CB5B000801CC5 /* K.swift in Sources */,
+				57AABA752A1CB1BC00801CC5 /* urlManager.swift in Sources */,
+				57D21BA22A037D0E00041D2E /* ContentView.swift in Sources */,
+				57AABA4D2A17625500801CC5 /* MoonHelper.swift in Sources */,
+				57D21BA02A037D0E00041D2E /* AppDelegate.swift in Sources */,
+				57D21BA42A037D0E00041D2E /* Experience.rcproject in Sources */,
+				57AABA492A14C7D800801CC5 /* ARView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		57D21BAA2A037D1100041D2E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		57D21BAB2A037D1100041D2E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		57D21BAD2A037D1100041D2E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"arTest/Preview Content\"";
+				DEVELOPMENT_TEAM = 82VAB3XBCP;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = arTest/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = aaa;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = arkit;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bada.arTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		57D21BAE2A037D1100041D2E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"arTest/Preview Content\"";
+				DEVELOPMENT_TEAM = 82VAB3XBCP;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = arTest/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = aaa;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = arkit;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bada.arTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		57D21B972A037D0E00041D2E /* Build configuration list for PBXProject "arTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				57D21BAA2A037D1100041D2E /* Debug */,
+				57D21BAB2A037D1100041D2E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		57D21BAC2A037D1100041D2E /* Build configuration list for PBXNativeTarget "arTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				57D21BAD2A037D1100041D2E /* Debug */,
+				57D21BAE2A037D1100041D2E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 57D21B942A037D0E00041D2E /* Project object */;
+}
+
+```
+
+#### File: `Where-is-the-Moon-AR/arTest.xcodeproj\project.xcworkspace\contents.xcworkspacedata`
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "self:">
+   </FileRef>
+</Workspace>
+
+```
+
+#### File: `Where-is-the-Moon-AR/arTest.xcodeproj\project.xcworkspace\xcshareddata\IDEWorkspaceChecks.plist`
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDEDidComputeMac32BitWarning</key>
+	<true/>
+</dict>
+</plist>
+
+```
+
+#### File: `Where-is-the-Moon-AR/arTest.xcodeproj\xcuserdata\habaek.xcuserdatad\xcschemes\xcschememanagement.plist`
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+		<key>arTest.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>0</integer>
+		</dict>
+	</dict>
+</dict>
+</plist>
 
 ```
 
@@ -145,5 +1841,5 @@ main(root_path, exclude, include, user_instruction)
             3. Detailed explanations of how the user can use the provided code to set up the web application.
 
     ### 6. User's Instruction:
-    Please help me build a web app based on this structure.
+    이 프로젝트에 대해 리드미 파일을 줘
     

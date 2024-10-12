@@ -1,5 +1,7 @@
 # 📜 PPM(Project Prompt Master)
 
+[English](https://github.com/habaekk/PPM) | [한국어](https://github.com/habaekk/PPM/blob/main/README_kr.md)
+
   
 
 **PPM**는 소프트웨어 개발을 위한 효율적인 **코딩 프롬프트 생성 도구**입니다. 
