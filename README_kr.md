@@ -102,6 +102,7 @@ python main.py
 ### 6. User's Instruction:
 	Please help me build a web app based on this structure.
 ```
+이제 이 프롬프트를 사용하는 LLM 모델(ChatGPT)에 입력해주세요.
 
 ## 📂 프로젝트 구조
 
