@@ -1,8 +1,8 @@
-# 📜 PPM
+# 📜 PPM(Project Prompt Master)
 
   
 
-**PPM(Project Prompt Master)** is an efficient **coding prompt generation tool** for software development.
+**PPM** is an efficient **coding prompt generation tool** for software development.
 This tool automatically generates prompts to assist with code creation based on the entire project structure and file contents.
 It is particularly useful for large projects, allowing for rapid analysis of the file structure and providing clear code suggestions.
 
