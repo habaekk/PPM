@@ -109,7 +109,7 @@ Now, please input this prompt into the LLM model (ChatGPT).
 
 ```bash
 o1-prompter/
-├── main.py					# Prompt Generation Main Script
+├── main.py			# Prompt Generation Main Script
 ├── result_prompt.txt		# Generated Prompt Output
 ├── README.md				
 └── .gitignore				
