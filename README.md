@@ -70,11 +70,7 @@ python main.py
 ## 🛠️ Usage Example
 
 
-```bash
-python main.py
-```
-
-The following prompt will be generated:
+After running `main.py`, the following prompt will be generated:
 
 
 ```plaintext

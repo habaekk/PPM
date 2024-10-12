@@ -68,11 +68,7 @@ python main.py
 ## 🛠️ 사용 예시
 
 
-```bash
-python main.py
-```
-
-다음과 같은 프롬프트가 생성됩니다:
+`main.py` 파일을 실행시키면, 다음과 같은 프롬프트가 생성됩니다:
 
 ```plaintext
 **Task**: Based on the following project structure and file contents, generate code to help the user build a software application.
